@@ -1,6 +1,8 @@
 package com.bus.ticketing.service.bookYourBus.service;
 
+import com.bus.ticketing.service.bookYourBus.commons.AppConstants;
 import com.bus.ticketing.service.bookYourBus.dto.Seat;
+import com.bus.ticketing.service.bookYourBus.dto.UpdateBusRquestDto;
 import com.bus.ticketing.service.bookYourBus.model.Bus;
 import com.bus.ticketing.service.bookYourBus.model.SeatsInventory;
 import com.bus.ticketing.service.bookYourBus.repository.BusRepo;
@@ -33,16 +35,27 @@ public class BusService {
         busRepo.deleteById(busId);
     }
 
-    public String updateBus(String busId, Bus bus){
-        Optional<Bus> busModel = busRepo.findById(busId);
+    public String updateBus(UpdateBusRquestDto updateBusRquestDto){
+        Optional<Bus> busModel = busRepo.findById(updateBusRquestDto.getBusId());
         if(busModel==null){
             throw new RuntimeException("Invalid bus id");
         }
-        busRepo.save(bus);
+        LocalDate minimumUpdatableDate = LocalDate.now().plusDays(AppConstants.MaxBookingAllowedDays);
+        if(updateBusRquestDto.getActiveTillDate().isAfter(minimumUpdatableDate)){
+            Bus bus = busModel.get();
+            bus.setActiveTillDate(updateBusRquestDto.getActiveTillDate());
+            busRepo.save(bus);
+        }else{
+            throw new RuntimeException("activeTillDate is not valid");
+        }
         return "Bus Updated Successfully";
     }
 
     public List<Bus> getAll(LocalDate date, String source, String destination){
+        LocalDate maxAllowedDate = LocalDate.now().plusDays(AppConstants.MaxBookingAllowedDays);
+        if(LocalDate.now().isAfter(date) ||   date.isAfter(maxAllowedDate)){
+            throw new RuntimeException("Search date is not allowed, please search with another date");
+        }
         List<Bus> busList = busRepo.findBySourceAndDestinationAndDate(source, destination, date);
         return busList;
     }

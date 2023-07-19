@@ -1,5 +1,6 @@
 package com.bus.ticketing.service.bookYourBus.controller;
 
+import com.bus.ticketing.service.bookYourBus.dto.UpdateBusRquestDto;
 import com.bus.ticketing.service.bookYourBus.model.Bus;
 import com.bus.ticketing.service.bookYourBus.service.BusService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class BusController {
         return ResponseEntity.ok(busService.addBus(bus));
     }
 
-    @PutMapping("/update/{busId}")
-    public ResponseEntity<?> updateBus(@PathVariable String busId, @RequestBody Bus bus) {
-        return ResponseEntity.ok(busService.updateBus(busId, bus));
+    @PutMapping("/update")
+    public ResponseEntity<?> updateBus(@RequestBody UpdateBusRquestDto updateBusRquestDto) {
+        return ResponseEntity.ok(busService.updateBus(updateBusRquestDto));
     }
 
     @PatchMapping("/delete/{busId}")

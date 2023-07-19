@@ -19,8 +19,9 @@ public class SeatsController {
 
     @GetMapping("/view")
     public ResponseEntity<?> viewSeats(@RequestParam String busId,
+                                       @RequestParam(required = false) boolean isAvailable,
                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return ResponseEntity.ok(seatService.viewSeats(busId, date));
+        return ResponseEntity.ok(seatService.viewSeats(busId, isAvailable, date));
     }
 
     @PostMapping("/book")
