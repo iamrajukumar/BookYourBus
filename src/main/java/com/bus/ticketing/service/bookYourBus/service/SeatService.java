@@ -55,7 +55,7 @@ public class SeatService {
         SeatsInventory seatsInventory = seatsInventoryRepo.findByBusIdAndDate(bookingRequestDto.getBusId(), bookingRequestDto.getJourneyDate());
         List<Integer> requestedSeats = bookingRequestDto.getSeatIds();
 
-        checkSeatsAvailability(seatsInventory, requestedSeats);
+        checkSeatsAvailability(seatsInventory, requestedSeats, bookingRequestDto);
 
         List<Seat> updatedSeats = new ArrayList<>();
         int amount=0;
@@ -70,7 +70,7 @@ public class SeatService {
         seatsInventoryRepo.updateSeats(bookingRequestDto.getBusId(), bookingRequestDto.getJourneyDate(), updatedSeats);
 
         //payment
-        TimeUnit.SECONDS.sleep(60);
+        TimeUnit.SECONDS.sleep(30);
         if(!paymentService.checkPayment(bookingRequestDto.getRequestId())){
             seatsInventoryRepo.updateSeats(bookingRequestDto.getBusId(), bookingRequestDto.getJourneyDate(), seatsInventory.getSeatList());
             return "Payment Failed";
@@ -80,12 +80,15 @@ public class SeatService {
         return "Booking Successfull";
     }
 
-    private void checkSeatsAvailability(SeatsInventory seatsInventory, List<Integer> requestedSeats){
+    private void checkSeatsAvailability(SeatsInventory seatsInventory, List<Integer> requestedSeats, BookingRequestDto bookingRequestDto){
         Map<Integer, Seat> seatsMap = seatsInventory.getSeatList().stream().collect(Collectors.toMap(Seat::getSeatId, s -> s));
         for(Integer seatId : requestedSeats){
             if(!seatsMap.containsKey(seatId) || Boolean.FALSE.equals(seatsMap.get(seatId).isAvailable())){
                 throw new RuntimeException("selected seats are Invalid or not available");
             }
+        }
+        if(paymentService.checkPayment(bookingRequestDto.getRequestId())){
+            throw new RuntimeException("Invalid request Id");
         }
     }
 

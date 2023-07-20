@@ -4,7 +4,9 @@ import com.bus.ticketing.service.bookYourBus.commons.BookingStatus;
 import com.bus.ticketing.service.bookYourBus.dto.BookingRequestDto;
 import com.bus.ticketing.service.bookYourBus.model.Booking;
 import com.bus.ticketing.service.bookYourBus.model.Bus;
+import com.bus.ticketing.service.bookYourBus.model.FeedBack;
 import com.bus.ticketing.service.bookYourBus.repository.BookingRepo;
+import com.bus.ticketing.service.bookYourBus.repository.FeedBackRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,6 +20,9 @@ public class BookingService {
 
     @Autowired
     private BookingRepo bookingRepo;
+
+    @Autowired
+    private FeedBackRepo feedBackRepo;
 
     @Autowired
     private BusService busService;
@@ -63,6 +68,11 @@ public class BookingService {
         booking.setCreatedAt(LocalDateTime.now());
         booking.setStatus(BookingStatus.CANCELLED);
         return bookingRepo.save(booking);
+    }
+
+    public String addFeedback(FeedBack feedBack){
+         feedBackRepo.save(feedBack);
+         return "Thanks for the feedBack!!";
     }
 
 }

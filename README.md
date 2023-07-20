@@ -15,4 +15,5 @@ Features
 3. User can book single/multiple seats in a bus
 4. User can cancel single/multiple seats from the booking
 5. User can see all his bookings
-6. Admin can add/update bus
+6. User can provide feedback for his bookings
+7. Admin can add/update bus
